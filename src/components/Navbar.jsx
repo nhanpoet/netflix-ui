@@ -31,10 +31,10 @@ export default function Navbar({ isScrolled }) {
             <img src={logo} alt="logo" />
           </div>
           <ul className="links flex">
-            {links.map(({ name, links }) => {
+            {links.map(({ name, link }) => {
               return (
                 <li>
-                  <Link to={links}>{name}</Link>
+                  <Link to={link}>{name}</Link>
                 </li>
               );
             })}

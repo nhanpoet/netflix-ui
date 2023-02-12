@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import BackgroundImage from "../assets/home.jpg";
 import MovieLogo from "../assets/homeTitle.webp";
@@ -6,9 +6,23 @@ import { FaPlay } from "react-icons/fa";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchMovies, getGenres } from "../store";
+import Slider from "../components/Slider";
 
 export default function Netflix() {
   const navigate = useNavigate();
+  const genresLoaded = useSelector((state) => state.netflix.genresLoaded);
+  const movies = useSelector((state) => state.netflix.movies);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getGenres());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (genresLoaded) dispatch(fetchMovies({ type: "all" }));
+  }, [dispatch, genresLoaded]);
 
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -43,6 +57,8 @@ export default function Netflix() {
           </div>
         </div>
       </div>
+
+      <Slider movies={movies} />
     </Container>
   );
 }
@@ -81,7 +97,7 @@ const Container = styled.div`
           border: none;
           border-radius: 1rem;
           cursor: pointer;
-          transition: 0.3 ease-in-out;
+          transition: 0.3s ease-in-out;
           &:hover {
             opacity: 0.8;
           }
