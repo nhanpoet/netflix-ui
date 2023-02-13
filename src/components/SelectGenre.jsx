@@ -28,11 +28,12 @@ export default function SelectGenre({ genres, type }) {
 
 const Container = styled.div`
   .selects {
-    margin-left: 3.5rem;
+    padding: 0.5rem;
+    margin-left: 3.1rem;
     cursor: pointer;
     font-size: 1.4rem;
     background-color: rgba(0, 0, 0, 0.4);
     color: white;
-    border-radius: 0.3rem;
+    border-radius: 0.5rem;
   }
 `;

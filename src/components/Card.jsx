@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import video from "../assets/video.mp4";
@@ -7,10 +8,33 @@ import { RiThumbUpFill, RiThumbDownFill } from "react-icons/ri";
 import { BsCheck } from "react-icons/bs";
 import { AiOutlinePlus } from "react-icons/ai";
 import { BiChevronDown } from "react-icons/bi";
+import { firebaseAuth } from "../utils/firebase-config";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { removeMovieFromLiked } from "../store";
 
 export default React.memo(function Card({ movieData, isLiked = false }) {
   const [isHovered, setIsHovered] = useState(false);
+  const [email, setEmail] = useState(undefined);
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  onAuthStateChanged(firebaseAuth, (currentUser) => {
+    if (currentUser) setEmail(currentUser.email);
+    else navigate("/login");
+  });
+
+  const addTolist = async () => {
+    try {
+      await axios.post("http://localhost:5000/api/user/add", {
+        email,
+        data: movieData,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Container
@@ -50,9 +74,16 @@ export default React.memo(function Card({ movieData, isLiked = false }) {
                 <RiThumbUpFill title="Like" />
                 <RiThumbDownFill title="Dislike" />
                 {isLiked ? (
-                  <BsCheck title="Remove From List" />
+                  <BsCheck
+                    title="Remove From List"
+                    onClick={() =>
+                      dispatch(
+                        removeMovieFromLiked({ movieId: movieData.id, email })
+                      )
+                    }
+                  />
                 ) : (
-                  <AiOutlinePlus title="Add to my list" />
+                  <AiOutlinePlus title="Add to my list" onClick={addTolist} />
                 )}
               </div>
               <div className="info">
